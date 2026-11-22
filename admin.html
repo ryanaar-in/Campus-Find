@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - LPU Lost & Found</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+body{background:#f8f9fa;color:#111}
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;background:radial-gradient(circle at 20% 20%, rgba(229,94,0,0.12), transparent 50%), linear-gradient(180deg, #fff, #f8f9fa)}
+.login-box{background:#fff;border:1px solid #e9e9e9;border-radius:24px;padding:28px;width:100%;max-width:420px;box-shadow:0 10px 30px rgba(0,0,0,0.06)}
+.login-brand{display:flex;align-items:center;gap:12px;margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid #f0f0f0}
+.login-brand img{width:48px;height:48px;border-radius:12px;border:1px solid #eee;object-fit:cover}
+.login-brand h2{font-size:16px;font-weight:800;line-height:1.2}
+.login-brand p{font-size:10px;color:#888;letter-spacing:1.5px;font-weight:700;margin-top:2px}
+.login-box h3{font-size:22px;font-weight:800;margin-bottom:6px}
+.login-box .sub{font-size:13px;color:#888;margin-bottom:20px}
+.input-group{position:relative;margin-bottom:14px}
+.input-group input{width:100%;padding:13px 44px 13px 14px;border:1px solid #ddd;border-radius:12px;outline:none;font-size:14px}
+.input-group input:focus{border-color:#111}
+.eye-btn{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:8px;border:1px solid #eee;background:#fff;cursor:pointer;font-size:11px;font-weight:700;color:#555}
+.btn{padding:13px;border-radius:12px;border:none;font-weight:700;cursor:pointer;font-size:14px}
+.btn-black{background:#111;color:#fff;width:100%}
+.error{display:none;background:#ffe6e6;color:#c00;padding:10px;border-radius:10px;font-size:13px;margin-bottom:12px;text-align:center}
+.admin{display:none;min-height:100vh}
+.topbar{background:#fff;border-bottom:1px solid #e9e9e9;padding:12px 3%;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10;gap:12px}
+.topbar-left{display:flex;align-items:center;gap:12px;min-width:0;flex:1}
+.topbar-left img{width:42px;height:42px;border-radius:10px;border:1px solid #eee;flex-shrink:0}
+.topbar-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar-title h1{font-size:15px;font-weight:800;line-height:1;white-space:nowrap}
+.topbar-title span{font-size:10px;color:#888;font-weight:700;letter-spacing:1.5px;display:block;margin-top:4px;white-space:nowrap}
+.topbar-actions{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.btn-view{background:#fff;border:1px solid #ddd;color:#111;padding:9px 16px;border-radius:10px;font-size:12px;font-weight:600;text-decoration:none}
+.btn-logout{background:#111;color:#fff;border:1px solid #111;padding:9px 16px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer}
+.tabs{display:flex;gap:8px;padding:12px 3%;background:#fff;border-bottom:1px solid #eee;overflow-x:auto;position:sticky;top:66px;z-index:9}
+.tab{padding:10px 16px;border-radius:20px;border:1px solid #ddd;background:#fff;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
+.tab.active{background:#111;color:#fff;border-color:#111}
+.content{padding:18px 3%;max-width:1300px;margin:0 auto}
+.panel{display:none}
+.panel.active{display:block}
+.card{background:#fff;border:1px solid #e9e9e9;border-radius:16px;padding:20px;margin-bottom:16px}
+.card h3{font-size:16px;font-weight:700;margin-bottom:14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.card input,.card textarea,.card select{width:100%;padding:11px 12px;border:1px solid #ddd;border-radius:10px;font-size:13px;outline:none}
+.card textarea{min-height:80px;resize:vertical}
+.card label{font-size:12px;font-weight:600;margin:12px 0 6px;display:block}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.stat{background:#fff;border:1px solid #e9e9e9;border-radius:14px;padding:16px}
+.stat b{font-size:22px;display:block}
+.stat span{font-size:11px;color:#888;letter-spacing:1px;font-weight:700}
+.report-item{border:1.5px solid #111;border-radius:14px;padding:14px;margin-bottom:12px;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,.05)}
+.report-item.resolved{border:1.5px solid #00C950;background:#f0fff4;box-shadow:0 4px 12px rgba(0,201,80,.15)}
+.tag-resolved{background:#00C950;color:#fff;padding:5px 10px;border-radius:100px;font-size:10px;font-weight:800;margin-left:8px}
+.report-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.report-info b{font-size:14px;display:block}
+.report-info small{font-size:12px;color:#666;display:block;margin-top:4px;line-height:1.5}
+.report-meta{margin-top:10px;background:#fafafa;border:1px solid #f0f0f0;border-radius:10px;padding:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.report-meta div{font-size:11px}
+.report-meta div span{color:#888;font-weight:600;display:block;font-size:10px;letter-spacing:0.5px;margin-bottom:2px}
+.report-meta .full{grid-column:1/-1}
+.actions{display:flex;gap:6px;flex-shrink:0}
+.actions button{padding:8px 12px;border-radius:8px;border:1px solid #ddd;background:#fff;font-size:11px;font-weight:700;cursor:pointer}
+.actions button.view{background:#111;color:#fff;border-color:#111}
+.actions button.del{background:#ffe6e6;border-color:#ffbcbc;color:#c00}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:100;padding:16px}
+.modal.active{display:flex}
+.modal-box{background:#fff;border-radius:20px;width:100%;max-width:560px;padding:22px;max-height:92vh;overflow-y:auto}
+.modal-box h3{font-size:18px;font-weight:800;margin-bottom:12px}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.modal-grid div{background:#fafafa;border:1px solid #eee;border-radius:10px;padding:10px}
+.modal-grid div span{font-size:10px;color:#888;font-weight:700;display:block;margin-bottom:3px}
+.modal-grid div b{font-size:13px;word-break:break-word}
+.modal-box img{width:100%;border-radius:12px;margin-top:10px;max-height:300px;object-fit:contain;background:#f6f6f6;padding:8px}
+@media(max-width:768px){
+  .login-box{padding:22px;border-radius:20px}
+  .topbar{padding:10px 3%}
+  .topbar-title h1{font-size:13px}
+  .topbar-title span{font-size:9px}
+  .topbar-left img{width:36px;height:36px}
+  .btn-view,.btn-logout{padding:8px 12px;font-size:11px}
+  .grid2{grid-template-columns:1fr}
+  .stat-grid{grid-template-columns:1fr 1fr}
+  .report-head{flex-direction:column}
+  .report-meta{grid-template-columns:1fr}
+  .modal-grid{grid-template-columns:1fr}
+  .tabs{top:60px}
+}
+</style>
+</head>
+<body>
+
+<div class="login-wrap" id="loginWrap">
+<div class="login-box">
+<div class="login-brand">
+<img src="https://upload.wikimedia.org/wikipedia/en/3/3a/Lovely_Professional_University_logo.png" alt="LPU">
+<div><h2>Lovely Professional University</h2><p>LOST & FOUND PORTAL</p></div>
+</div>
+<h3>Admin Login</h3>
+<p class="sub">Secure access to control panel</p>
+<div id="loginError" class="error"></div>
+<div class="input-group"><input id="user" placeholder="Username"></div>
+<div class="input-group"><input id="pass" type="password" placeholder="Password"><button class="eye-btn" onclick="togglePass('pass',this)">SHOW</button></div>
+<button class="btn btn-black" onclick="doLogin()">Login to Dashboard</button>
+</div>
+</div>
+
+<div class="admin" id="adminPanel">
+<div class="topbar">
+<div class="topbar-left">
+<img src="https://upload.wikimedia.org/wikipedia/en/3/3a/Lovely_Professional_University_logo.png">
+<div class="topbar-title"><h1>Lovely Professional University - Admin Panel</h1><span>LOST & FOUND PORTAL</span></div>
+</div>
+<div class="topbar-actions">
+<a href="index.html" class="btn-view">View Site</a>
+<button class="btn-logout" onclick="logout()">Logout</button>
+</div>
+</div>
+
+<div class="tabs">
+<button class="tab active" onclick="switchTab(event,'reports')">Reports</button>
+<button class="tab" onclick="switchTab(event,'lost')">Lost Items</button>
+<button class="tab" onclick="switchTab(event,'found')">Found Items</button>
+<button class="tab" onclick="switchTab(event,'resolved')">Resolved</button>
+<button class="tab" onclick="switchTab(event,'about')">About</button>
+<button class="tab" onclick="switchTab(event,'contact')">Contact</button>
+<button class="tab" onclick="switchTab(event,'security')">Security Logs</button>
+<button class="tab" onclick="switchTab(event,'settings')">Settings</button>
+</div>
+
+<div class="content">
+<div class="panel active" id="panel-reports">
+<div class="stat-grid">
+<div class="stat"><b id="totalItems">0</b><span>TOTAL REPORTS</span></div>
+<div class="stat"><b id="lostItems">0</b><span>LOST ITEMS</span></div>
+<div class="stat"><b id="foundItems">0</b><span>FOUND ITEMS</span></div>
+<div class="stat"><b id="secItems">0</b><span>SECURITY POSTS</span></div>
+</div>
+<div class="card"><h3>Recent Reports - Delete / View Details</h3><div id="reportList"><p style="font-size:13px;color:#888">Loading...</p></div></div>
+</div>
+
+<div class="panel" id="panel-lost">
+<div class="card"><h3>Lost Items - Only Lost Reports</h3><div id="lostList"></div></div>
+</div>
+
+<div class="panel" id="panel-found">
+<div class="card"><h3>Found Items - Only Found Reports</h3><div id="foundList"></div></div>
+</div>
+
+<div class="panel" id="panel-resolved">
+<div class="stat-grid">
+<div class="stat" style="border-color:#00C950"><b id="resolvedTotal" style="color:#00C950">0</b><span style="color:#00C950">RESOLVED ITEMS</span></div>
+</div>
+<div class="card"><h3> Resolved Items - Green Marked</h3><div id="resolvedList"></div></div>
+</div>
+
+<div class="panel" id="panel-about">
+<div class="card"><h3>Edit About Us Section</h3><label>Title</label><input id="aboutTitle"><label>Paragraph 1</label><textarea id="aboutP1"></textarea><label>Paragraph 2</label><textarea id="aboutP2"></textarea><div class="grid2"><div><label>Feature 1 Title</label><input id="f1t"><label>Feature 1 Desc</label><input id="f1d"></div><div><label>Feature 2 Title</label><input id="f2t"><label>Feature 2 Desc</label><input id="f2d"></div><div><label>Feature 3 Title</label><input id="f3t"><label>Feature 3 Desc</label><input id="f3d"></div><div><label>Feature 4 Title</label><input id="f4t"><label>Feature 4 Desc</label><input id="f4d"></div></div><button class="btn btn-black" style="margin-top:16px" onclick="saveAbout()">Save About Changes</button></div>
+</div>
+<div class="panel" id="panel-contact">
+<div class="card"><h3>Edit Contact Us Section - Call Now & Mail Now</h3><label>Contact Title (Upar Wala)</label><input id="cTitle"><label>Contact Description</label><textarea id="cDesc"></textarea><label>Box 1 Title - Email Support</label><input id="cBox1Title"><label>Email 1 (Mail Now Button)</label><input id="cEmail1"><label>Email 2</label><input id="cEmail2"><label>Box 2 Title - Helpline</label><input id="cBox2Title"><label>Phone Number (Call Now Button)</label><input id="cPhone"><label>Working Hours</label><input id="cHours"><label>Box 3 Title - Campus Office</label><input id="cBox3Title"><label>Address Title</label><input id="cAddr1"><label>Address Details</label><input id="cAddr2"><label>Box 4 Title - Security Office</label><input id="cBox4Title"><label>Box 4 Text - Security Office Details</label><textarea id="cBox4Text"></textarea><button class="btn btn-black" style="margin-top:16px" onclick="saveContact()">Save Contact Changes - Update Call & Mail</button></div>
+</div>
+<div class="panel" id="panel-security"><div class="card"><h3>Security Posts - All Logs</h3><div id="securityList"></div></div></div>
+<div class="panel" id="panel-settings">
+<div class="card"><h3>Change Admin Login</h3><p style="font-size:12px;color:#888;margin-bottom:14px">Update your admin username and password.</p><label>New Username</label><input id="newUser"><label>New Password</label><div class="input-group" style="margin:0"><input id="newPass" type="password" placeholder="Enter new password"><button class="eye-btn" onclick="togglePass('newPass',this)">SHOW</button></div><label>Confirm Password</label><div class="input-group" style="margin:14px 0 0"><input id="confirmPass" type="password" placeholder="Confirm password"><button class="eye-btn" onclick="togglePass('confirmPass',this)">SHOW</button></div><button class="btn btn-black" style="margin-top:16px" onclick="saveCredentials()">Update Login Credentials</button><div style="margin-top:18px;padding:12px;background:#f8f9fa;border:1px solid #eee;border-radius:10px"><small style="font-size:11px;color:#888">Current Login:</small><br><b id="currentCreds" style="font-size:13px"></b></div></div>
+</div>
+</div>
+</div>
+
+<div class="modal" id="detailModal"><div class="modal-box">
+<h3 id="mTitle">Item Details</h3>
+<div class="modal-grid">
+<div><span>TYPE</span><b id="mType"></b></div><div><span>CATEGORY</span><b id="mCat"></b></div>
+<div><span>LOCATION</span><b id="mLoc"></b></div><div><span>DATE</span><b id="mDate"></b></div>
+<div><span>POSTED BY</span><b id="mBy"></b></div><div><span>CONTACT</span><b id="mContact"></b></div>
+<div><span>SECRET KEY</span><b id="mKey"></b></div><div><span>ID</span><b id="mId"></b></div>
+<div class="full"><span>DESCRIPTION</span><b id="mDesc"></b></div>
+</div>
+<img id="mPhoto" style="display:none">
+<button class="btn btn-black" style="background:#fff;border:1px solid #ddd;color:#111;width:100%;margin-top:14px" onclick="closeModal()">Close</button>
+</div></div>
+
+<!-- FIREBASE API ADDED -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCVhdBBzUBMH7E2qjEhqgTXkD_bigkcTjs",
+  authDomain: "campus-find-67d1d.firebaseapp.com",
+  projectId: "campus-find-67d1d",
+  storageBucket: "campus-find-67d1d.firebasestorage.app",
+  messagingSenderId: "612919517562",
+  appId: "1:612919517562:web:df574fbe1d5155f245f6c3",
+  measurementId: "G-V5SE01FERV"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+let allItems = [];
+let allResolved = [];
+
+function getCreds(){let s=JSON.parse(localStorage.getItem('lpu_admin_creds')||'null');return s||{user:"admin",pass:"Admin@123"};}
+function togglePass(id,btn){let inp=document.getElementById(id);if(inp.type==="password"){inp.type="text";btn.innerText="HIDE";}else{inp.type="password";btn.innerText="SHOW";}}
+function doLogin(){
+  const u=document.getElementById('user').value.trim();
+  const p=document.getElementById('pass').value.trim();
+  const err=document.getElementById('loginError');
+  let creds=getCreds();
+  if(u===creds.user && p===creds.pass){ showAdmin(); } else { err.innerText="Invalid username or password"; err.style.display='block'; }
+}
+async function showAdmin(){
+  document.getElementById('loginWrap').style.display='none';
+  document.getElementById('adminPanel').style.display='block';
+  await loadAllFromFirebase();
+  loadAboutForm(); loadContactForm(); loadCredsDisplay();
+}
+function logout(){location.reload();}
+function switchTab(e,t){document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));e.target.classList.add('active');document.getElementById('panel-'+t).classList.add('active');}
+
+async function loadAllFromFirebase(){
+  try{
+    const snap = await db.collection('items').orderBy('createdAt','desc').get();
+    allItems = snap.docs.map(d=>({docId:d.id, id:d.data().id||d.id, ...d.data()}));
+    // Resolved are items where status == resolved OR in resolved collection
+    const rSnap = await db.collection('resolved').get().catch(()=>({docs:[]}));
+    allResolved = rSnap.docs.map(d=>({docId:d.id, id:d.data().id||d.id, ...d.data()}));
+    // Also items marked resolved inside items
+    let resolvedInItems = allItems.filter(i=>i.status==='resolved');
+    if(resolvedInItems.length) allResolved = [...allResolved, ...resolvedInItems];
+  }catch(e){ console.log(e); allItems=[]; }
+  loadStats(); loadReports(); loadLostItems(); loadFoundItems(); loadSecurityLogs(); loadResolved();
+}
+function loadStats(){
+  let items=allItems;
+  let resolved=allResolved;
+  document.getElementById('totalItems').innerText=items.length;
+  document.getElementById('lostItems').innerText=items.filter(i=>i.type==='lost').length;
+  document.getElementById('foundItems').innerText=items.filter(i=>i.type==='found').length;
+  document.getElementById('secItems').innerText=items.filter(i=>i.type==='security').length;
+  let rt=document.getElementById('resolvedTotal'); if(rt) rt.innerText=resolved.length;
+}
+function esc(s){return String(s||'').replace(/</g,'&lt;')}
+function renderItemHTML(it){
+  let docId = it.docId||it.id;
+  return `<div class="report-item"><div class="report-head"><div class="report-info"><b>${esc(it.name)}</b><small>${String(it.type||'').toUpperCase()} | ${esc(it.cat)} | ${esc(it.date)}</small></div><div class="actions"><button class="view" onclick="viewItem('${docId}')">View Details</button><button class="del" onclick="deleteItem('${docId}')">Delete</button></div></div><div class="report-meta"><div><span>LOCATION</span>${esc(it.loc)}</div><div><span>POSTED BY</span>${esc(it.postedBy)}</div><div><span>CONTACT</span>${esc(it.contact)}</div><div><span>SECRET KEY</span>${esc(it.secretKey||'-')}</div><div class="full"><span>DESCRIPTION</span>${esc(it.desc)}</div></div></div>`;
+}
+function loadReports(){let list=document.getElementById('reportList');if(allItems.length===0){list.innerHTML='<p style="font-size:13px;color:#888">No reports yet</p>';return}list.innerHTML=allItems.map(it=>renderItemHTML(it)).join('');}
+function loadLostItems(){let items=allItems.filter(i=>i.type==='lost');const list=document.getElementById('lostList');if(!list) return;if(items.length===0){list.innerHTML='<p style="font-size:13px;color:#888">No lost items reported yet</p>';return}list.innerHTML=items.map(it=>renderItemHTML(it)).join('');}
+function loadFoundItems(){let items=allItems.filter(i=>i.type==='found');const list=document.getElementById('foundList');if(!list) return;if(items.length===0){list.innerHTML='<p style="font-size:13px;color:#888">No found items reported yet</p>';return}list.innerHTML=items.map(it=>renderItemHTML(it)).join('');}
+function loadSecurityLogs(){let items=allItems.filter(i=>i.type==='security');const list=document.getElementById('securityList');if(items.length===0){list.innerHTML='<p style="font-size:13px;color:#888">No security posts yet</p>';return}list.innerHTML=items.map(it=>renderItemHTML(it)).join('');}
+function renderResolvedHTML(it){let docId=it.docId||it.id;return `<div class="report-item resolved"><div class="report-head"><div class="report-info"><b>${esc(it.name)} <span class="tag-resolved">RESOLVED</span></b><small>${String(it.type||'').toUpperCase()} | ${esc(it.cat)} | ${esc(it.date)}</small></div><div class="actions"><button class="view" onclick="viewResolvedItem('${docId}')">View Details</button><button class="del" onclick="deleteResolved('${docId}')">Delete</button></div></div><div class="report-meta"><div><span>LOCATION</span>${esc(it.loc)}</div><div><span>POSTED BY</span>${esc(it.postedBy)}</div><div><span>CONTACT</span>${esc(it.contact)}</div><div><span>SECRET KEY</span>${esc(it.secretKey||'-')}</div><div class="full"><span>DESCRIPTION</span>${esc(it.desc)}</div></div></div>`;}
+function loadResolved(){const list=document.getElementById('resolvedList');if(!list) return;if(allResolved.length===0){list.innerHTML='<p style="font-size:13px;color:#888">No resolved items yet</p>';return}list.innerHTML=allResolved.map(it=>renderResolvedHTML(it)).join('');}
+function fillModal(it, resolvedLabel){
+  document.getElementById('mTitle').innerText=it.name+(resolvedLabel?" (RESOLVED)":"");
+  document.getElementById('mType').innerText=it.type||'';document.getElementById('mCat').innerText=it.cat||'';
+  document.getElementById('mLoc').innerText=it.loc||'';document.getElementById('mDate').innerText=it.date||'';
+  document.getElementById('mBy').innerText=it.postedBy||'';document.getElementById('mContact').innerText=it.contact||'';
+  document.getElementById('mKey').innerText=it.secretKey||'-';document.getElementById('mId').innerText=it.id||'';
+  document.getElementById('mDesc').innerText=it.desc||'';
+  let photo=document.getElementById('mPhoto');if(it.photo){photo.src=it.photo;photo.style.display='block';}else{photo.style.display='none';}
+  document.getElementById('detailModal').classList.add('active');
+}
+function viewResolvedItem(docId){let it=allResolved.find(x=>(x.docId||x.id)==docId);if(!it)return;fillModal(it,true);}
+function deleteResolved(docId){if(!confirm('Delete this resolved item permanently?'))return;db.collection('resolved').doc(docId).delete().then(()=>loadAllFromFirebase()).catch(()=>{db.collection('items').doc(docId).delete().then(()=>loadAllFromFirebase())});}
+function viewItem(docId){let it=allItems.find(x=>(x.docId||x.id)==docId);if(!it)return;fillModal(it,false);}
+function closeModal(){document.getElementById('detailModal').classList.remove('active');}
+async function deleteItem(docId){if(!confirm('Delete this report permanently?'))return;await db.collection('items').doc(docId).delete();await loadAllFromFirebase();}
+function loadAboutForm(){let data=JSON.parse(localStorage.getItem('lpu_about')||'null')||{title:"About This Portal",p1:"LPU Lost & Found Portal is an official initiative for students and staff of Lovely Professional University to report and recover lost belongings inside the campus quickly and securely.",p2:"Every day items like ID cards, wallets, earphones, lab coats and keys are lost in blocks, hostels and cafeterias. This platform connects the finder with the owner without any third party involvement.",f1t:"100% Secure",f1d:"Secret key protection for every post",f2t:"Fast Recovery",f2d:"Direct contact with finder in one click",f3t:"Verified Posts",f3d:"No spam, only genuine reports",f4t:"Security Support",f4d:"Campus security can post found items"};document.getElementById('aboutTitle').value=data.title;document.getElementById('aboutP1').value=data.p1;document.getElementById('aboutP2').value=data.p2;document.getElementById('f1t').value=data.f1t;document.getElementById('f1d').value=data.f1d;document.getElementById('f2t').value=data.f2t;document.getElementById('f2d').value=data.f2d;document.getElementById('f3t').value=data.f3t;document.getElementById('f3d').value=data.f3d;document.getElementById('f4t').value=data.f4t;document.getElementById('f4d').value=data.f4d;}
+function saveAbout(){
+  let data={title:document.getElementById('aboutTitle').value,p1:document.getElementById('aboutP1').value,p2:document.getElementById('aboutP2').value,f1t:document.getElementById('f1t').value,f1d:document.getElementById('f1d').value,f2t:document.getElementById('f2t').value,f2d:document.getElementById('f2d').value,f3t:document.getElementById('f3t').value,f3d:document.getElementById('f3d').value,f4t:document.getElementById('f4t').value,f4d:document.getElementById('f4d').value,};
+  localStorage.setItem('lpu_about',JSON.stringify(data));
+  db.collection('settings').doc('about').set(data).then(()=>alert('About section updated!'));
+}
+function loadContactForm(){let data=JSON.parse(localStorage.getItem('lpu_contact')||'null')||{title:"Contact Us",desc:"Have any issue, suggestion or need help? Contact the LPU Lost & Found support team.",box1Title:"Email Support",addr1:"Student Welfare Block, LPU Campus",addr2:"Jalandhar-Delhi G.T. Road, Phagwara",email1:"lostfound@lpu.co.in",email2:"support@lpu.co.in",box2Title:"Helpline",phone:"+91 1824 444 000",hours:"Mon - Sat, 9 AM - 6 PM",box3Title:"Campus Office",box4Title:"Security Office",box4Text:"For urgent lost items like ID Card, Wallet, visit LPU Security Post near Main Gate."};document.getElementById('cTitle').value=data.title||"Contact Us";document.getElementById('cDesc').value=data.desc||"";document.getElementById('cBox1Title').value=data.box1Title||"Email Support";document.getElementById('cAddr1').value=data.addr1;document.getElementById('cAddr2').value=data.addr2;document.getElementById('cEmail1').value=data.email1;document.getElementById('cEmail2').value=data.email2;document.getElementById('cBox2Title').value=data.box2Title||"Helpline";document.getElementById('cPhone').value=data.phone;document.getElementById('cHours').value=data.hours;document.getElementById('cBox3Title').value=data.box3Title||"Campus Office";document.getElementById('cBox4Title').value=data.box4Title||"Security Office";document.getElementById('cBox4Text').value=data.box4Text||"";}
+function saveContact(){
+  let data={title:document.getElementById('cTitle').value,desc:document.getElementById('cDesc').value,box1Title:document.getElementById('cBox1Title').value,addr1:document.getElementById('cAddr1').value,addr2:document.getElementById('cAddr2').value,email1:document.getElementById('cEmail1').value,email2:document.getElementById('cEmail2').value,box2Title:document.getElementById('cBox2Title').value,phone:document.getElementById('cPhone').value,hours:document.getElementById('cHours').value,box3Title:document.getElementById('cBox3Title').value,box4Title:document.getElementById('cBox4Title').value,box4Text:document.getElementById('cBox4Text').value,};
+  localStorage.setItem('lpu_contact',JSON.stringify(data));
+  db.collection('settings').doc('contact').set(data).then(()=>alert('Contact section updated!'));
+}
+function loadCredsDisplay(){let creds=getCreds();document.getElementById('currentCreds').innerText=creds.user+" / "+creds.pass;document.getElementById('newUser').value=creds.user;}
+function saveCredentials(){let nu=document.getElementById('newUser').value.trim();let np=document.getElementById('newPass').value.trim();let cp=document.getElementById('confirmPass').value.trim();if(!nu||!np){alert('Please fill username and password');return;}if(np!==cp){alert('Passwords do not match');return;}if(np.length<4){alert('Password must be at least 4 characters');return;}localStorage.setItem('lpu_admin_creds',JSON.stringify({user:nu,pass:np}));document.getElementById('newPass').value='';document.getElementById('confirmPass').value='';loadCredsDisplay();alert('Login credentials updated! New login: '+nu);}
+</script>
+</body>
+</html>

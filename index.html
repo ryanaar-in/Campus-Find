@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LPU Lost & Found Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+html{scroll-behavior:smooth}
+body{background:#fcfcfd;color:#111;overflow-x:hidden}
+:root{--orange:#E55E00;--border:#ececf0;--muted:#6b6b7a}
+.top-header{background:#fff;position:sticky;top:0;z-index:60;border-bottom:1px solid var(--border)}
+.top-main{display:flex;align-items:center;justify-content:space-between;padding:14px 4%}
+.top-main-left{display:flex;align-items:center;gap:14px;flex:1}
+.hamburger{width:44px;height:44px;border-radius:12px;border:1px solid var(--border);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer}
+.hamburger span{width:18px;height:2px;background:#111;border-radius:2px}
+.lpu-brand{display:flex;align-items:center;gap:12px}
+.lpu-brand img{width:46px;height:46px;border-radius:14px;border:1px solid var(--border)}
+.lpu-brand h1{font-size:15px;font-weight:800;font-family:'Plus Jakarta Sans'}
+.lpu-brand p{font-size:9px;color:var(--orange);letter-spacing:2.2px;font-weight:800;margin-top:3px}
+.hero-slider-box{position:relative;padding:70px 5% 30px;display:flex;align-items:center;justify-content:center;overflow:hidden;isolation:isolate;min-height:360px;background:#fff;border-bottom:1px solid var(--border)}
+.hero-slider-bg{position:absolute;inset:0;z-index:-1;transition:all .8s ease}
+.hero-mesh{position:absolute;inset:0;opacity:.5;z-index:-1;background-image:radial-gradient(at 1px 1px, rgba(0,0,0,.06) 1px, transparent 0);background-size:32px 32px}
+.hero-content{max-width:900px;margin:0 auto;text-align:center;width:100%;position:relative;z-index:2}
+.slider-viewport{width:100%;overflow:hidden;position:relative;min-height:190px;cursor:grab;user-select:none}
+.slider-track{display:flex;transition:transform .7s cubic-bezier(.77,0,.175,1)}
+.slide{flex:0 0 100%;min-width:100%;padding:0 10px;pointer-events:none}
+.slide h2{font-size:56px;font-weight:900;line-height:.92;letter-spacing:-3px;font-family:'Plus Jakarta Sans';color:#111}
+.slide h2 span{display:block;margin-top:8px;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.slide p{color:var(--muted);font-size:17px;margin:16px auto 0;max-width:580px;line-height:1.6}
+.dots{display:flex;gap:8px;justify-content:center;margin-top:22px}
+.dots i{width:32px;height:4px;border-radius:100px;background:#d0d0d8;transition:.4s;cursor:pointer}
+.dots i.active{background:#111;width:42px}
+.hero-bottom-wrap{background:#fff;padding:0 5% 32px;position:relative;z-index:5;border-bottom:1px solid var(--border)}
+.hero-bottom-inner{max-width:900px;margin:0 auto;text-align:center}
+.hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;padding:26px 0 0;border-top:1px dashed #e5e5e8}
+.btn{padding:13px 26px;border-radius:14px;font-size:13px;font-weight:700;cursor:pointer;border:none;text-decoration:none;display:inline-flex;align-items:center;gap:8px;justify-content:center}
+.btn-orange{background:#111;color:#fff}
+.btn-ghost{background:#fff;color:#111;border:1px solid var(--border)}
+.trust-outer-box{margin-top:20px;border:1.5px solid #e5e7eb;border-radius:18px;background:#fff;padding:16px;box-shadow:0 4px 20px rgba(0,0,0,.04)}
+.trust-bar{display:grid;grid-template-columns:repeat(4, 1fr);gap:12px}
+.trust-pill{display:flex;align-items:center;justify-content:flex-start;gap:10px;background:#fafafb;border:1.5px solid #eef0f3;padding:12px 14px;border-radius:12px;font-size:11.5px;font-weight:700;color:#111;min-height:52px;text-align:left;transition:.2s}
+.trust-pill:hover{border-color:#111;transform:translateY(-1px)}
+.trust-pill svg{flex-shrink:0}
+.drawer-overlay{position:fixed;inset:0;background:rgba(10,10,15,0.35);backdrop-filter:blur(16px);z-index:80;display:none;opacity:0;transition:.3s}
+.drawer-overlay.active{display:block;opacity:1}
+.drawer{position:fixed;top:0;left:0;bottom:0;width:360px;background:#fff;z-index:90;transform:translateX(-100%);transition:transform 0.5s cubic-bezier(.16,1,.3,1);border-right:1px solid var(--border);display:flex;flex-direction:column;box-shadow:20px 0 60px rgba(0,0,0,.12)}
+.drawer.active{transform:translateX(0)}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;padding:22px;border-bottom:1px solid var(--border)}
+.drawer-close{width:38px;height:38px;border-radius:12px;border:1px solid var(--border);background:#fff;cursor:pointer;font-weight:700}
+.drawer-links{padding:18px;display:flex;flex-direction:column;gap:6px;overflow-y:auto}
+.drawer-section-label{font-size:10px;font-weight:800;letter-spacing:1.5px;color:#999;margin:12px 4px 4px}
+.drawer-links a{padding:12px 14px;border-radius:14px;text-decoration:none;color:#111;font-size:14px;font-weight:600;border:1px solid transparent;display:flex;align-items:center;gap:12px;transition:.2s}
+.drawer-links a .ico{background:#f7f7f8;border:1px solid #f0f0f2;width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#111}
+.drawer-links a:hover .ico{background:#111;color:#fff;border-color:#111}
+.drawer-links a.active-orange{background:#fff3e6;border-color:#ffd6b0;color:var(--orange)}
+.drawer-links a.active-orange .ico{background:#ffe8cc;border-color:#ffd6b0;color:var(--orange)}
+.drawer-links a.security-link{background:#EEF2FF;border-color:#C7D2FE;color:#0B3D91}
+.drawer-links a.security-link .ico{background:#E0E7FF;border-color:#C7D2FE;color:#0B3D91}
+.drawer-links a.admin-link{background:#111;color:#fff}
+.drawer-links a.admin-link .ico{background:#1e1e1e;border-color:#2a2a2a;color:#fff}
+.drawer-foot{margin-top:auto;padding:18px 22px;border-top:1px solid var(--border);font-size:11px;color:#999}
+.container{padding:0 4% 40px;max-width:1300px;margin:0 auto}
+.section-head{display:flex;justify-content:space-between;align-items:center;margin:36px 0 18px}
+.section-head h3{font-size:20px;font-weight:800;font-family:'Plus Jakarta Sans'}
+#count{background:#fff;border:1px solid var(--border);padding:7px 12px;border-radius:100px;font-size:11px;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:18px}
+.card{background:#fff;border:1.5px solid #111;border-radius:20px;padding:18px;box-shadow:0 4px 18px rgba(0,0,0,.06);transition:.25s}
+.card:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(0,0,0,.12);border-color:#000}
+.card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.tag{padding:6px 12px;border-radius:100px;font-size:10px;font-weight:800}
+.tag-lost{background:#111;color:#fff}.tag-found{background:var(--orange);color:#fff}.tag-security{background:#0B3D91;color:#fff}
+.cat{font-size:11px;background:#f5f5f7;padding:6px 10px;border-radius:100px;font-weight:600;display:flex;align-items:center;gap:6px}
+.card h4{font-size:15.5px;font-weight:700;margin-bottom:10px}
+.meta{font-size:12px;color:#888;display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.meta span{background:#fafafb;padding:5px 10px;border-radius:100px;border:1px solid #f0f0f2;display:flex;align-items:center;gap:5px}
+.posted-by{font-size:12px;background:#fafafb;border:1px solid #f0f0f2;padding:8px 12px;border-radius:12px;margin-bottom:12px}
+.btn-full{width:100%;background:#111;color:#fff;border-radius:12px;padding:12px;font-size:13px;font-weight:700;border:none;cursor:pointer}
+.info-section{max-width:1300px;margin:40px auto 0;padding:0 4%}
+.info-card{background:#fff;border:1.5px solid #111;border-radius:20px;padding:28px;box-shadow:0 4px 20px rgba(0,0,0,.05)}
+.info-card h2{font-family:'Plus Jakarta Sans';font-size:22px;font-weight:800;margin-bottom:12px}
+.info-card p{font-size:14px;line-height:1.7;color:#555;margin-bottom:10px}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.info-box{background:#fafafb;border:1px solid #f0f0f2;border-radius:14px;padding:16px}
+.info-box h4{font-size:13px;font-weight:800;margin-bottom:6px}
+.info-box p{font-size:13px;margin:0}
+.footer-pro{background:#0f0f12;color:#8a8a95;padding:44px 4% 24px;margin-top:40px;border-top:1px solid #1e1e22}
+.footer-grid{max-width:1300px;margin:0 auto;display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:30px}
+.footer-pro h5{color:#fff;font-size:13px;font-weight:800;margin-bottom:14px;font-family:'Plus Jakarta Sans'}
+.footer-pro p,.footer-pro a{font-size:12.5px;line-height:1.7;color:#8a8a95;text-decoration:none}
+.footer-bottom{max-width:1300px;margin:28px auto 0;padding-top:18px;border-top:1px solid #1e1e22;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:11px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(16px);display:none;align-items:center;justify-content:center;z-index:100;padding:16px}
+.modal.active{display:flex}
+.modal-box{background:#fff;border-radius:24px;width:100%;max-width:540px;padding:26px;max-height:92vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,.18)}
+.detail-label{font-size:10px;font-weight:800;letter-spacing:1px;color:#999;margin-bottom:4px}
+.key-input{width:100%;border:2px solid var(--border);border-radius:16px;padding:16px;text-align:center;font-size:28px;font-weight:800;letter-spacing:12px;margin:16px 0}
+.key-error{display:none;background:#ffe6e6;color:#c00;padding:10px;border-radius:10px;font-size:13px;margin-bottom:12px;text-align:center}
+.empty-state{background:#fff;border:1px dashed #d0d0d6;border-radius:24px;padding:60px 20px;text-align:center}
+.call-btn{display:none;width:100%;background:#00c950;color:#fff;border-radius:12px;padding:12px;font-size:14px;font-weight:700;text-align:center;text-decoration:none;margin-top:10px}
+.call-btn.show{display:block}
+@media(max-width:900px){.trust-bar{grid-template-columns:repeat(2, 1fr)}.footer-grid{grid-template-columns:1fr 1fr}.info-grid{grid-template-columns:1fr}}
+@media(max-width:768px){
+.slide h2{font-size:28px;letter-spacing:-1.5px}
+.slider-viewport{min-height:160px}
+.hero-slider-box{padding:36px 5% 22px;min-height:300px}
+.grid{grid-template-columns:1fr}
+.drawer{width:88%;max-width:360px}
+.footer-grid{grid-template-columns:1fr}
+.trust-bar{grid-template-columns:repeat(2, 1fr)}
+.trust-pill{font-size:11px;padding:10px 10px;min-height:50px}
+}
+</style>
+</head>
+<body>
+
+<header class="top-header">
+  <div class="top-main">
+    <div class="top-main-left">
+      <button class="hamburger" onclick="toggleDrawer()"><span></span><span></span><span></span></button>
+      <div class="lpu-brand">
+        <img src="https://upload.wikimedia.org/wikipedia/en/3/3a/Lovely_Professional_University_logo.png" alt="LPU">
+        <div class="lpu-text"><h1>Lovely Professional University</h1><p>LOST & FOUND PORTAL</p></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="drawer-overlay" id="overlay" onclick="toggleDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-head">
+    <div style="display:flex;align-items:center;gap:12px">
+      <img src="https://upload.wikimedia.org/wikipedia/en/3/3a/Lovely_Professional_University_logo.png" style="width:38px;height:38px;border-radius:10px;border:1px solid var(--border)">
+      <div><h3 style="font-family:'Plus Jakarta Sans';font-size:15px;font-weight:800">LPU Portal</h3><p style="font-size:10px;color:#888;font-weight:700;letter-spacing:1px">LOST & FOUND</p></div>
+    </div>
+    <button class="drawer-close" onclick="toggleDrawer()">✕</button>
+  </div>
+  <div class="drawer-links">
+    <div class="drawer-section-label">NAVIGATION</div>
+    <a href="#" onclick="toggleDrawer()"><span class="ico">🏠</span> Home</a>
+    <a href="#about" onclick="toggleDrawer()"><span class="ico">ℹ️</span> About Us</a>
+    <a href="#contact" onclick="toggleDrawer()"><span class="ico">📞</span> Contact Us</a>
+    <div class="drawer-section-label">MY ACTIVITY</div>
+    <a href="my-posts.html"><span class="ico">📋</span> My Posts</a>
+    <a href="success.html"><span class="ico">🏆</span> Success Wall</a>
+    <a href="security.html" class="security-link"><span class="ico">🛡️</span> Security Post</a>
+    <div class="drawer-section-label">REPORT</div>
+    <a href="report.html?type=lost"><span class="ico">🔍</span> Report Lost</a>
+    <a href="report.html?type=found" class="active-orange"><span class="ico">❤️</span> Report Found</a>
+    <a href="admin.html" class="admin-link"><span class="ico">🔒</span> Admin Login</a>
+  </div>
+  <div class="drawer-foot">© 2026 LPU Lost & Found Portal<br>Secure • Fast • Verified</div>
+</div>
+
+<div class="hero-slider-box" id="heroSliderBox">
+  <div class="hero-slider-bg" id="heroBg"></div>
+  <div class="hero-mesh"></div>
+  <div class="hero-content">
+    <div class="slider-viewport" id="viewport">
+      <div class="slider-track" id="sliderTrack">
+        <div class="slide"><h2>Lost something?<br><span style="background:linear-gradient(90deg,#111,#E55E00);-webkit-background-clip:text;background-clip:text">We will help you find it.</span></h2><p>A secure platform for LPU students to report lost and found items across the campus.</p></div>
+        <div class="slide"><h2>Found something?<br><span style="background:linear-gradient(90deg,#111,#0078ff);-webkit-background-clip:text;background-clip:text">Help your fellow student.</span></h2><p>Every item has a story. Post what you found and help it reach its owner safely.</p></div>
+        <div class="slide"><h2>Direct connection<br><span style="background:linear-gradient(90deg,#111,#00a651);-webkit-background-clip:text;background-clip:text">Without third party.</span></h2><p>This portal directly connects the finder with the owner — fast, secure and verified.</p></div>
+        <div class="slide"><h2>Official initiative<br><span style="background:linear-gradient(90deg,#111,#7b2ff7);-webkit-background-clip:text;background-clip:text">For LPU campus only.</span></h2><p>Built for students and staff of Lovely Professional University to recover belongings inside campus.</p></div>
+      </div>
+    </div>
+    <div class="dots" id="dots"></div>
+  </div>
+</div>
+
+<div class="hero-bottom-wrap">
+  <div class="hero-bottom-inner">
+    <div class="hero-actions">
+      <a href="report.html?type=lost" class="btn btn-orange"><span>I Lost Something</span></a>
+      <a href="report.html?type=found" class="btn btn-ghost">I Found Something</a>
+    </div>
+    <div class="trust-outer-box">
+      <div class="trust-bar">
+        <div class="trust-pill">🛡️ 100% Secure & Verified</div>
+        <div class="trust-pill">📞 Direct Owner Contact</div>
+        <div class="trust-pill">📍 Campus Only</div>
+        <div class="trust-pill">⚡ Quick Recovery</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="section-head"><h3>Recent Reports</h3><span id="count">Loading...</span></div>
+  <div id="grid" class="grid"></div>
+  <div id="empty" class="empty-state"><h4 style="font-weight:800">All clear! No items yet</h4><p style="color:#888;font-size:13px;margin-top:6px">Be the first to report a lost or found item.</p></div>
+</div>
+
+<div class="info-section" id="about">
+  <div class="info-card">
+    <h2 id="aboutTitle">About Us</h2>
+    <p id="aboutP1">LPU Lost & Found Portal is an official student initiative built to help students and staff recover lost belongings inside the LPU campus. Our mission is to connect finders directly with owners — fast, secure and without any third party.</p>
+    <p id="aboutP2">Every day items like ID cards, wallets, earphones, lab coats and keys are lost in blocks, hostels and cafeterias. This platform connects the finder with the owner without any third party involvement.</p>
+    <div class="info-grid">
+      <div class="info-box"><h4 id="f1t">Our Mission</h4><p id="f1d">To create a trusted, verified platform where every lost item can find its way back to its owner quickly.</p></div>
+      <div class="info-box"><h4 id="f2t">How It Works</h4><p id="f2d">Report lost or found item, add photo and location, and directly connect via contact details after verification.</p></div>
+      <div class="info-box"><h4 id="f3t">Campus Only</h4><p id="f3d">This portal is exclusively for Lovely Professional University students, faculty and staff.</p></div>
+      <div class="info-box"><h4 id="f4t">Secure & Verified</h4><p id="f4d">Secret key verification and admin moderation ensures only genuine owners can claim items.</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="info-section" id="contact">
+  <div class="info-card">
+    <h2 id="contactTitle">Contact Us</h2>
+    <p id="contactDesc">Have any issue, suggestion or need help? Contact the LPU Lost & Found support team. We are here to help you recover your belongings.</p>
+    <div class="info-grid">
+      <div class="info-box"><h4 id="contactBox1Title">Email Support</h4><p id="contactEmailText">lostfound@lpu.co.in<br>support@lpu.co.in</p></div>
+      <div class="info-box"><h4 id="contactBox2Title">Helpline</h4><p id="contactPhoneText">+91 1824 444 000<br>Mon - Sat, 9 AM - 6 PM</p></div>
+      <div class="info-box"><h4 id="contactBox3Title">Campus Office</h4><p id="campusOfficeText">Student Welfare Block, LPU Campus<br>Jalandhar-Delhi G.T. Road, Phagwara</p></div>
+      <div class="info-box"><h4 id="contactBox4Title">Security Office</h4><p id="securityOfficeText">For urgent lost items like ID Card, Wallet, visit LPU Security Post.</p></div>
+    </div>
+    <div style="display:flex;gap:12px;margin-top:20px;flex-wrap:wrap">
+      <a id="callNowContact" href="tel:+911824444000" style="flex:1;min-width:140px;background:#00C950;color:#fff;border-radius:14px;padding:14px;font-size:14px;font-weight:700;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px;">Call Now</a>
+      <a id="mailNowContact" href="mailto:lostfound@lpu.co.in" style="flex:1;min-width:140px;background:#111;color:#fff;border-radius:14px;padding:14px;font-size:14px;font-weight:700;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px;">Mail Now</a>
+    </div>
+  </div>
+</div>
+
+<footer class="footer-pro">
+  <div class="footer-grid">
+    <div><h5>LPU Lost & Found</h5><p>An official student initiative to help LPU community recover lost belongings inside campus.</p></div>
+    <div><h5>Quick Links</h5><a href="#" style="display:block;margin-bottom:6px">Home</a><a href="report.html?type=lost" style="display:block;margin-bottom:6px">Report Lost</a><a href="report.html?type=found" style="display:block;margin-bottom:6px">Report Found</a></div>
+    <div><h5>Support</h5><a href="#about" style="display:block;margin-bottom:6px">About</a><a href="#contact" style="display:block;margin-bottom:6px">Contact</a><a href="admin.html" style="display:block">Admin</a></div>
+  </div>
+  <div class="footer-bottom"><span>© 2026 LPU Lost & Found Portal</span><span>Secure • Fast • Verified</span></div>
+</footer>
+
+<div class="modal" id="detailModal">
+<div class="modal-box">
+<h3 id="dTitle" style="font-size:20px;font-weight:800;line-height:1.3"></h3>
+<div id="dExtra" style="background:#fafafb;border:1px solid #f0f0f2;border-radius:16px;padding:16px;margin:16px 0;display:grid;grid-template-columns:1fr 1fr;gap:14px">
+<div><div class="detail-label">ITEM NAME</div><b id="exName" style="font-size:13px"></b></div>
+<div><div class="detail-label">CATEGORY</div><b id="exCat" style="font-size:13px"></b></div>
+<div><div class="detail-label">LOCATION</div><b id="exLoc" style="font-size:13px"></b></div>
+<div><div class="detail-label">DATE</div><b id="exDate" style="font-size:13px"></b></div>
+<div><div class="detail-label">POSTED BY</div><b id="exPosted" style="font-size:13px"></b></div>
+<div><div class="detail-label">TYPE</div><b id="exType" style="font-size:13px"></b></div>
+</div>
+<div style="margin-bottom:12px"><div class="detail-label">DESCRIPTION</div><p id="dDesc" style="font-size:13.5px;color:#333;white-space:pre-wrap;line-height:1.6;background:#fff;border:1px solid #f0f0f2;padding:12px;border-radius:12px"></p></div>
+<div id="dPhotoBox" style="display:none;margin-bottom:16px"><div class="detail-label" style="margin-bottom:6px">PHOTO</div><img id="dPhoto" src="" style="width:100%;border-radius:16px;max-height:300px;object-fit:contain;background:#f6f6f6;padding:8px;border:1px solid #eee"></div>
+<div id="contactBox" style="background:#fff7ed;border:1px solid #ffedd5;border-radius:14px;padding:14px;display:none;text-align:center">
+<div class="detail-label" style="margin-bottom:8px">CONTACT DETAILS</div>
+<b id="dContact" style="font-size:14px;word-break:break-word;display:block;margin-bottom:10px"></b>
+<a id="callNowBtn" class="call-btn" href="#">Call Now</a>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px;margin-top:20px">
+<button id="showContactBtn" onclick="showContact()" style="width:100%;background:#E55E00;color:#fff;border:none;border-radius:14px;padding:16px;font-size:15px;font-weight:700;cursor:pointer;">Show Contact to Connect</button>
+<button onclick="openResolveModal()" style="width:100%;background:#00C950;color:#fff;border:none;border-radius:14px;padding:16px;font-size:15px;font-weight:700;cursor:pointer;">Mark as Resolved</button>
+<button onclick="closeModal('detailModal')" style="width:100%;background:#FFE6E6;color:#DC2626;border:1px solid #FFCCCC;border-radius:14px;padding:16px;font-size:15px;font-weight:700;cursor:pointer">Close</button>
+</div>
+</div>
+</div>
+
+<div class="modal" id="resolveModal"><div class="modal-box" style="max-width:420px;text-align:center">
+<h3>Verify Ownership</h3><input id="secretKeyInput" class="key-input" maxlength="4" placeholder="••••">
+<div id="keyError" class="key-error"></div>
+<div style="display:flex;gap:10px;justify-content:center"><button class="btn btn-ghost" style="flex:1;max-width:140px" onclick="closeModal('resolveModal')">Cancel</button><button class="btn btn-orange" style="flex:1;max-width:140px" onclick="verifyAndResolve()"><span>Verify</span></button></div>
+</div></div>
+
+<!-- FIREBASE - FIXED: SAME API AS ALL OTHER FILES -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCVhdBBzUBMH7E2qjEhqgTXkD_bigkcTjs",
+  authDomain: "campus-find-67d1d.firebaseapp.com",
+  projectId: "campus-find-67d1d",
+  storageBucket: "campus-find-67d1d.firebasestorage.app",
+  messagingSenderId: "612919517562",
+  appId: "1:612919517562:web:df574fbe1d5155f245f6c3",
+  measurementId: "G-V5SE01FERV"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+window._fb = { db };
+</script>
+
+<script>
+function toggleDrawer(){document.getElementById('drawer').classList.toggle('active');document.getElementById('overlay').classList.toggle('active');}
+let items = [];
+let currentDetail = null;
+function closeModal(id){document.getElementById(id).classList.remove('active')}
+function esc(s){return String(s||'').replace(/</g,'&lt;')}
+function getCatIcon(cat){
+  const map={'ID Card':{dot:'#0078ff',label:'ID'},'Wallet':{dot:'#8B5A2B',label:'Wallet'},'Keys':{dot:'#E5B800',label:'Keys'},'Electronics':{dot:'#7b2ff7',label:'Electronics'},'Books':{dot:'#00a651',label:'Books'},'Others':{dot:'#888',label:'Others'}};
+  return map[cat] || {dot:'#888',label:cat};
+}
+function render(){
+ const grid=document.getElementById('grid'); const empty=document.getElementById('empty');
+ document.getElementById('count').innerText=items.length+' Items';
+ if(items.length===0){grid.innerHTML='';empty.style.display='block';return}
+ empty.style.display='none';
+ grid.innerHTML=items.map(it=>{
+   let tagClass=it.type==='lost'?'tag-lost':it.type==='security'?'tag-security':'tag-found';
+   let tagLabel=it.type==='security'?'SECURITY':String(it.type||'').toUpperCase();
+   let catInfo=getCatIcon(it.cat);
+   return `<div class="card"><div class="card-top"><span class="tag ${tagClass}">${tagLabel}</span><span class="cat"><span style="width:8px;height:8px;background:${catInfo.dot};border-radius:50%;display:inline-block"></span> ${esc(catInfo.label)}</span></div><h4>${esc(it.name)}</h4><div class="meta"><span>📍 ${esc(it.loc)}</span><span>📅 ${esc(it.date)}</span></div><div class="posted-by">Posted by: <b>${esc(it.postedBy)}</b></div><button class="btn-full" onclick="openDetail('${it.docId}')">View Details →</button></div>`;
+ }).join('');
+}
+function extractPhoneNumber(text){if(!text) return null;const m=text.match(/(\+91[\s-]?)?[6-9]\d{9}/);return m?m[0].replace(/[^0-9+]/g,''):null;}
+function openDetail(docId){
+ currentDetail=items.find(x=>x.docId===docId);
+ if(!currentDetail) return;
+ document.getElementById('dTitle').innerText=currentDetail.name;
+ document.getElementById('dDesc').innerText=currentDetail.desc || 'No description provided';
+ document.getElementById('dContact').innerText=currentDetail.contact;
+ document.getElementById('exName').innerText=currentDetail.name;
+ document.getElementById('exCat').innerText=currentDetail.cat;
+ document.getElementById('exLoc').innerText=currentDetail.loc;
+ document.getElementById('exDate').innerText=currentDetail.date;
+ document.getElementById('exPosted').innerText=currentDetail.postedBy;
+ document.getElementById('exType').innerText=String(currentDetail.type||'').toUpperCase();
+ const phone=extractPhoneNumber(currentDetail.contact);
+ const callBtn=document.getElementById('callNowBtn');
+ if(phone){callBtn.href=`tel:${phone}`;callBtn.classList.add('show');}else{callBtn.classList.remove('show');}
+ if(currentDetail.photo){document.getElementById('dPhoto').src=currentDetail.photo;document.getElementById('dPhotoBox').style.display='block';}else{document.getElementById('dPhotoBox').style.display='none';}
+ document.getElementById('contactBox').style.display='none';document.getElementById('showContactBtn').style.display='block';document.getElementById('detailModal').classList.add('active');
+}
+function showContact(){document.getElementById('contactBox').style.display='block';document.getElementById('showContactBtn').style.display='none';}
+function openResolveModal(){document.getElementById('secretKeyInput').value='';document.getElementById('keyError').style.display='none';document.getElementById('resolveModal').classList.add('active');}
+
+async function verifyAndResolve(){
+  let e=document.getElementById('secretKeyInput').value.trim();
+  let err=document.getElementById('keyError');
+  if(!e||e.length!==4){err.innerText='Enter valid key';err.style.display='block';return;}
+  if(currentDetail.secretKey && e!==String(currentDetail.secretKey)){err.innerText='Incorrect key';err.style.display='block';return;}
+  try{
+    let data = {...currentDetail, resolvedDate: new Date().toISOString().slice(0,10), status:'resolved', createdAt: firebase.firestore.FieldValue.serverTimestamp()};
+    await db.collection('resolved').doc(currentDetail.docId).set(data);
+    await db.collection('items').doc(currentDetail.docId).delete();
+  }catch(err2){ console.log(err2); alert("Firebase error: "+err2.message); return; }
+  items=items.filter(x=>x.docId!==currentDetail.docId);
+  closeModal('resolveModal');closeModal('detailModal');render();
+  alert("Resolved! Moved to Success Wall ✅");
+}
+
+async function loadFromFirebase(){
+  const local = JSON.parse(localStorage.getItem('lpu_items') || '[]');
+  if(local.length>0){ items = local.map((x,i)=>({docId:String(x.id||i), ...x})); render(); }
+  try{
+    const snap = await db.collection('items').orderBy('createdAt','desc').get();
+    let arr=[];
+    snap.forEach(d=>{ arr.push({ docId:d.id, id:d.data().id||d.id, ...d.data() }); });
+    items = arr;
+    render();
+  }catch(e){ console.log("Firebase load error", e); render(); }
+}
+loadFromFirebase();
+
+async function loadAdminSettings(){
+  let aboutData = JSON.parse(localStorage.getItem('lpu_about') || 'null');
+  if(aboutData){ applyAbout(aboutData); }
+  let contactData = JSON.parse(localStorage.getItem('lpu_contact') || 'null');
+  if(contactData){ applyContact(contactData); }
+  try{
+    const snap = await db.collection('settings').get();
+    snap.forEach(d=>{
+      if(d.id==="about"){ localStorage.setItem('lpu_about', JSON.stringify(d.data())); applyAbout(d.data()); }
+      if(d.id==="contact"){ localStorage.setItem('lpu_contact', JSON.stringify(d.data())); applyContact(d.data()); }
+    });
+  }catch(e){ console.log(e); }
+}
+function applyAbout(aboutData){
+    if(aboutData.title) document.getElementById('aboutTitle').innerText = aboutData.title;
+    if(aboutData.p1) document.getElementById('aboutP1').innerText = aboutData.p1;
+    if(aboutData.p2) document.getElementById('aboutP2').innerText = aboutData.p2;
+    if(aboutData.f1t) document.getElementById('f1t').innerText = aboutData.f1t;
+    if(aboutData.f1d) document.getElementById('f1d').innerText = aboutData.f1d;
+    if(aboutData.f2t) document.getElementById('f2t').innerText = aboutData.f2t;
+    if(aboutData.f2d) document.getElementById('f2d').innerText = aboutData.f2d;
+    if(aboutData.f3t) document.getElementById('f3t').innerText = aboutData.f3t;
+    if(aboutData.f3d) document.getElementById('f3d').innerText = aboutData.f3d;
+    if(aboutData.f4t) document.getElementById('f4t').innerText = aboutData.f4t;
+    if(aboutData.f4d) document.getElementById('f4d').innerText = aboutData.f4d;
+}
+function applyContact(contactData){
+  const phone = contactData ? contactData.phone : localStorage.getItem('lpu_admin_contact_phone');
+  const email = contactData ? contactData.email1 : localStorage.getItem('lpu_admin_contact_email');
+  const email2 = contactData ? contactData.email2 : null;
+  const hours = contactData ? contactData.hours : null;
+  const addr1 = contactData ? contactData.addr1 : null;
+  const addr2 = contactData ? contactData.addr2 : null;
+  if(contactData){
+    if(contactData.title) document.getElementById('contactTitle').innerText = contactData.title;
+    if(contactData.desc) document.getElementById('contactDesc').innerText = contactData.desc;
+    if(contactData.box1Title) document.getElementById('contactBox1Title').innerText = contactData.box1Title;
+    if(contactData.box2Title) document.getElementById('contactBox2Title').innerText = contactData.box2Title;
+    if(contactData.box3Title) document.getElementById('contactBox3Title').innerText = contactData.box3Title;
+    if(contactData.box4Title) document.getElementById('contactBox4Title').innerText = contactData.box4Title;
+    if(contactData.box4Text) document.getElementById('securityOfficeText').innerText = contactData.box4Text;
+    if(email) document.getElementById('contactEmailText').innerHTML = email + "<br>" + (email2||"");
+    if(phone) {
+      document.getElementById('contactPhoneText').innerHTML = phone + "<br>" + (hours||"Mon - Sat, 9 AM - 6 PM");
+      document.getElementById('callNowContact').href = 'tel:' + phone.replace(/\s/g,'');
+    }
+    if(addr1) document.getElementById('campusOfficeText').innerHTML = addr1 + "<br>" + (addr2||"");
+    if(email) document.getElementById('mailNowContact').href = 'mailto:' + email;
+  }
+}
+loadAdminSettings();
+
+const track=document.getElementById('sliderTrack');
+const dotsBox=document.getElementById('dots');
+const viewport=document.getElementById('viewport');
+const heroBg=document.getElementById('heroBg');
+const bgs=[
+  "radial-gradient(circle at 20% 20%, rgba(229,94,0,0.18), transparent 55%), linear-gradient(180deg, #fff6ef, #ffffff)",
+  "radial-gradient(circle at 80% 20%, rgba(0,120,255,0.15), transparent 55%), linear-gradient(180deg, #f0f7ff, #ffffff)",
+  "radial-gradient(circle at 20% 80%, rgba(0,200,100,0.14), transparent 55%), linear-gradient(180deg, #f0fff4, #ffffff)",
+  "radial-gradient(circle at 50% 50%, rgba(150,0,255,0.12), transparent 60%), linear-gradient(180deg, #f8f0ff, #ffffff)"
+];
+const realSlides=[...track.children];
+const firstClone=realSlides[0].cloneNode(true);
+track.appendChild(firstClone);
+let cur=0; const total=realSlides.length;
+let isDragging=false,startX=0,autoTimer;
+for(let i=0;i<total;i++){let d=document.createElement('i');if(i===0)d.classList.add('active');d.onclick=()=>goTo(i);dotsBox.appendChild(d);}
+function updateDots(){[...dotsBox.children].forEach((el,idx)=>el.classList.toggle('active',idx===cur%total));}
+function goTo(i,animate=true){cur=i;track.style.transition=animate?'transform .7s cubic-bezier(.77,0,.175,1)':'none';track.style.transform=`translateX(-${cur*100}%)`;heroBg.style.background=bgs[cur%total];updateDots();}
+function handleLoop(){if(cur===total){setTimeout(()=>{goTo(0,false);},700);}}
+function next(){cur++;goTo(cur,true);handleLoop();}
+function prev(){if(cur===0){goTo(total-1,true);}else{cur--;goTo(cur,true);}}
+function startAuto(){autoTimer=setInterval(next,3500);}
+function stopAuto(){clearInterval(autoTimer);}
+startAuto();
+viewport.addEventListener('touchstart',dragStart);
+viewport.addEventListener('touchmove',dragMove);
+viewport.addEventListener('touchend',dragEnd);
+viewport.addEventListener('mousedown',dragStart);
+viewport.addEventListener('mousemove',dragMove);
+viewport.addEventListener('mouseup',dragEnd);
+viewport.addEventListener('mouseleave',dragEnd);
+function dragStart(e){stopAuto();isDragging=true;startX=e.type.includes('mouse')?e.pageX:e.touches[0].clientX;track.style.transition='none';}
+function dragMove(e){if(!isDragging) return;const x=e.type.includes('mouse')?e.pageX:e.touches[0].clientX;const diff=x-startX;const move=(diff/viewport.offsetWidth)*100;track.style.transform=`translateX(calc(-${cur*100}% + ${move}%))`;}
+function dragEnd(e){if(!isDragging) return;isDragging=false;const x=e.type.includes('mouse')?e.pageX:(e.changedTouches?e.changedTouches[0].clientX:startX);const diff=x-startX;if(diff<-50)next();else if(diff>50)prev();else goTo(cur,true);startAuto();}
+goTo(0);
+</script>
+</body>
+</html>

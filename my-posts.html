@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Posts - LPU Lost & Found</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+body{background:#f8f9fa;color:#111}
+:root{--orange:#E55E00;--border:#e9e9e9}
+nav{display:flex;align-items:center;justify-content:space-between;padding:12px 4%;background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10}
+.nav-left{display:flex;align-items:center;gap:12px;min-width:0;flex:1}
+.logo-img{width:42px;height:42px;border-radius:10px;object-fit:cover;flex-shrink:0;border:1px solid #eee}
+.brand h1{color:var(--orange);font-size:15px;font-weight:800;line-height:1.1;white-space:nowrap}
+.brand p{font-size:9px;color:#888;letter-spacing:1.5px;font-weight:700;margin-top:2px}
+.btn{padding:10px 16px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;border:none;text-decoration:none;display:inline-block}
+.btn-orange{background:var(--orange);color:#fff}
+.btn-ghost{background:#fff;border:1px solid var(--border);color:#111}
+.container{max-width:780px;margin:24px auto;padding:0 4%}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.header h2{font-size:22px;font-weight:800;letter-spacing:-0.3px}
+.count{background:#111;color:#fff;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:0.5px}
+.card{background:#fff;border:1px solid var(--border);border-radius:20px;padding:0;overflow:hidden;margin-bottom:16px;transition:0.2s}
+.card:hover{border-color:#ddd;box-shadow:0 8px 24px rgba(0,0,0,0.06)}
+.card-top{padding:16px 18px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #f5f5f5}
+.card-top-left{display:flex;align-items:center;gap:10px}
+.cat-icon{width:40px;height:40px;border-radius:12px;background:#fff3e6;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:var(--orange);flex-shrink:0}
+.cat-icon.lost{background:#f0f0f0;color:#111}
+.cat-icon.found{background:#fff0e6;color:var(--orange)}
+.cat-icon.security{background:#eef2ff;color:#0B3D91}
+.card-top b{font-size:14px;font-weight:700;display:block;line-height:1.2}
+.card-top small{font-size:11px;color:#888;margin-top:2px;display:block}
+.badge{padding:5px 10px;border-radius:20px;font-size:10px;font-weight:800;letter-spacing:0.8px}
+.badge.lost{background:#111;color:#fff}
+.badge.found{background:var(--orange);color:#fff}
+.badge.security{background:#0B3D91;color:#fff}
+.card-body{padding:14px 18px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.info-box{background:#fafafa;border:1px solid #f0f0f0;border-radius:10px;padding:10px}
+.info-box span{font-size:9px;color:#999;font-weight:700;letter-spacing:0.8px;display:block;margin-bottom:3px}
+.info-box b{font-size:12px;font-weight:600;word-break:break-word;line-height:1.3}
+.info-box.full{grid-column:1/-1}
+.card-bottom{padding:12px 18px;background:#fcfcfc;border-top:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.key-wrap{display:flex;align-items:center;gap:10px}
+.key-label{font-size:9px;color:#999;font-weight:700;letter-spacing:0.8px}
+.key{font-size:18px;font-weight:800;letter-spacing:4px;background:#111;color:var(--orange);padding:6px 14px;border-radius:10px;border:1px dashed #333}
+.key-actions{display:flex;gap:6px}
+.s-btn{padding:8px 14px;border-radius:10px;border:1px solid var(--border);background:#fff;font-size:11px;font-weight:700;cursor:pointer}
+.s-btn.copy{background:#111;color:#fff;border-color:#111}
+.empty{text-align:center;padding:60px 20px;background:#fff;border:1px dashed #ccc;border-radius:20px;margin-top:10px}
+.empty b{font-size:18px}
+.empty p{font-size:13px;color:#888;margin-top:8px;line-height:1.5}
+@media(max-width:768px){
+  nav{padding:10px 3%}
+  .logo-img{width:36px;height:36px}
+  .brand h1{font-size:13px}
+  .container{padding:0 3.5%;margin:16px auto}
+  .header h2{font-size:18px}
+  .card{border-radius:16px}
+  .card-top{padding:14px}
+  .card-body{grid-template-columns:1fr;padding:12px 14px}
+  .card-bottom{flex-direction:column;align-items:flex-start;padding:12px 14px}
+  .key-wrap{width:100%;justify-content:space-between}
+  .key{font-size:16px;letter-spacing:3px}
+  .key-actions{width:100%}
+  .key-actions .s-btn{flex:1}
+}
+</style>
+</head>
+<body>
+
+<nav>
+<div class="nav-left">
+<img class="logo-img" src="https://upload.wikimedia.org/wikipedia/en/3/3a/Lovely_Professional_University_logo.png">
+<div class="brand"><h1>Lovely Professional University</h1><p>LOST & FOUND PORTAL</p></div>
+</div>
+<div style="display:flex;gap:8px;flex-shrink:0">
+<a href="index.html" class="btn btn-ghost">Home</a>
+<a href="report.html" class="btn btn-orange">+ Report</a>
+</div>
+</nav>
+
+<div class="container">
+<div class="header"><h2>My Posts</h2><span class="count" id="count">Loading...</span></div>
+<div id="list"></div>
+<div id="empty" class="empty" style="display:none">
+<b>No posts yet</b>
+<p>When you report an item, it will appear here with its secret key.<br>Now saved in Firebase, not just this phone.</p>
+<a href="report.html?type=lost" class="btn btn-orange" style="margin-top:16px;padding:12px 20px">Report Your First Item</a>
+</div>
+</div>
+
+<!-- FIREBASE API ADDED -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCVhdBBzUBMH7E2qjEhqgTXkD_bigkcTjs",
+  authDomain: "campus-find-67d1d.firebaseapp.com",
+  projectId: "campus-find-67d1d",
+  storageBucket: "campus-find-67d1d.firebasestorage.app",
+  messagingSenderId: "612919517562",
+  appId: "1:612919517562:web:df574fbe1d5155f245f6c3",
+  measurementId: "G-V5SE01FERV"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+const list = document.getElementById('list');
+const empty = document.getElementById('empty');
+const count = document.getElementById('count');
+
+function getIcon(cat){
+  if(cat==='Electronics') return '💻';
+  if(cat==='ID Card / Documents') return '🪪';
+  if(cat==='Bag / Backpack') return '🎒';
+  if(cat==='Wallet') return '👛';
+  if(cat==='Keys') return '🔑';
+  if(cat==='Books') return '📚';
+  return '📦';
+}
+function esc(s){return String(s||'').replace(/</g,'&lt;')}
+
+async function render(){
+  // 1. Is phone me jo Secret Keys save hai, wo lo
+  let myKeys = [];
+  try{
+    let saved = JSON.parse(localStorage.getItem('lpu_my_posts') || '[]');
+    // saved kabhi pura object hota hai, kabhi sirf key
+    myKeys = saved.map(x => typeof x==='string' ? x : (x.secretKey || x.key || x.id)).filter(Boolean);
+    // alag se keys wali list bhi check karo
+    let keys2 = JSON.parse(localStorage.getItem('lpu_my_keys') || '[]');
+    myKeys = [...new Set([...myKeys, ...keys2])];
+  }catch(e){ myKeys=[]; }
+
+  let myPosts = [];
+
+  // 2. Firebase se sab items lao, aur sirf apni wali filter karo
+  try{
+    const snap = await db.collection('items').orderBy('createdAt','desc').get();
+    let all = snap.docs.map(d=>({docId:d.id, ...d.data()}));
+    if(myKeys.length>0){
+      myPosts = all.filter(p => myKeys.includes(p.secretKey) || myKeys.includes(String(p.id)));
+    } else {
+      myPosts = [];
+    }
+    // 3. Agar Firebase me nahi mila to purana localStorage wala data bhi dikha do (backup)
+    if(myPosts.length===0){
+      let local = JSON.parse(localStorage.getItem('lpu_my_posts')||'[]');
+      if(local.length && typeof local[0]==='object' && local[0].name){
+        myPosts = local;
+      }
+    }
+  }catch(e){
+    console.log(e);
+    myPosts = JSON.parse(localStorage.getItem('lpu_my_posts')||'[]');
+  }
+
+  count.innerText = myPosts.length + ' Posts';
+  if(myPosts.length===0){list.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  list.innerHTML = myPosts.map(p=>`
+ <div class="card">
+   <div class="card-top">
+     <div class="card-top-left">
+       <div class="cat-icon ${p.type}">${getIcon(p.cat)}</div>
+       <div><b>${esc(p.name || p.itemName)}</b><small>${esc(p.cat)} • ${esc(p.loc || p.location)} • ${esc(p.date || 'No date')}</small></div>
+     </div>
+     <span class="badge ${p.type}">${String(p.type||'').toUpperCase()}</span>
+   </div>
+   <div class="card-body">
+     <div class="info-box"><span>LOCATION</span><b>${esc(p.loc || p.location)}</b></div>
+     <div class="info-box"><span>POSTED BY</span><b>${esc(p.postedBy || 'You')}</b></div>
+     <div class="info-box"><span>CONTACT</span><b>${esc(p.contact || '-')}</b></div>
+     <div class="info-box"><span>CATEGORY</span><b>${esc(p.cat)}</b></div>
+     <div class="info-box full"><span>DESCRIPTION</span><b>${esc(p.desc || p.description || '-')}</b></div>
+   </div>
+   <div class="card-bottom">
+     <div class="key-wrap"><div><div class="key-label">SECRET KEY</div><div class="key">${esc(p.secretKey)}</div></div></div>
+     <div class="key-actions">
+       <button class="s-btn copy" onclick="copyKey('${p.secretKey}')">Copy Key</button>
+     </div>
+   </div>
+ </div>
+ `).join('');
+}
+window.copyKey = function(k){ navigator.clipboard.writeText(k).then(()=>{ alert('Copied: '+k) }); }
+render();
+</script>
+</body>
+</html>

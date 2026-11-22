@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security - LPU Lost & Found</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+body{background:#f5f7ff;color:#111}
+.header{background:#fff;padding:14px 4%;display:flex;align-items:center;gap:12px;border-bottom:1px solid #e5e7eb;position:sticky;top:0;z-index:10}
+.header img{width:42px;height:42px;border-radius:10px}
+.header h1{font-size:16px;font-weight:800;color:#0038ff}
+.form-wrap{max-width:600px;margin:24px auto;background:#fff;border:1px solid #e5e7eb;border-radius:20px;padding:24px}
+.badge{display:inline-flex;align-items:center;gap:6px;background:#eef2ff;color:#0038ff;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:700;margin-bottom:14px}
+.form-wrap h2{font-size:22px;font-weight:800;margin-bottom:6px}
+.form-wrap p{font-size:13px;color:#666;margin-bottom:18px}
+label{font-size:13px;font-weight:600;display:block;margin:14px 0 6px}
+input,select,textarea{width:100%;padding:12px 14px;border:1px solid #ddd;border-radius:12px;font-size:14px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:#0038ff;box-shadow:0 0 0 3px rgba(0,56,255,0.1)}
+textarea{resize:vertical;min-height:80px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn{width:100%;padding:14px;border-radius:12px;border:none;font-weight:700;font-size:14px;cursor:pointer;margin-top:18px}
+.btn-blue{background:#0038ff;color:#fff}
+.btn-ghost{background:#f3f4f6;color:#111;margin-top:8px}
+@media(max-width:768px){.row{grid-template-columns:1fr}.form-wrap{margin:12px;border-radius:16px;padding:18px}}
+</style>
+</head>
+<body>
+<div class="header">
+<img src="https://upload.wikimedia.org/wikipedia/en/3/3a/Lovely_Professional_University_logo.png">
+<div><h1>Security Panel - LPU</h1><p style="font-size:11px;color:#888">LOST & FOUND - STAFF ACCESS</p></div>
+</div>
+
+<div class="form-wrap">
+<div class="badge">🛡️ Security Found Item</div>
+<h2>Report Found Item</h2>
+<p>If you found any item in campus (block, hostel, ground, cafeteria), fill this form. It will appear on home page instantly with SECURITY tag.</p>
+
+<label>Item Name *</label>
+<input id="name" placeholder="e.g. Black Wallet, ID Card, Keys">
+
+<div class="row">
+<div><label>Category *</label><select id="cat"><option>Wallet</option><option>ID Card</option><option>Electronics</option><option>Keys</option><option>Books</option><option>Clothes</option><option>Others</option></select></div>
+<div><label>Location Found *</label><input id="loc" placeholder="e.g. Block 32, Ground"></div>
+</div>
+
+<div class="row">
+<div><label>Date Found *</label><input id="date" type="date"></div>
+<div><label>Security Post / Block *</label><input id="post" placeholder="e.g. Main Gate, Block 14 Security"></div>
+</div>
+
+<label>Description *</label>
+<textarea id="desc" placeholder="Describe item color, brand, any identification mark"></textarea>
+
+<label>Security Contact Number *</label>
+<input id="contact" placeholder="e.g. 9876543210 or Security Room 1234">
+
+<label>Your Name (Guard Name) *</label>
+<input id="guard" placeholder="e.g. Ram Kumar - Security Staff">
+
+<label>Upload Photo (Optional)</label>
+<input id="photo" type="file" accept="image/*">
+
+<button class="btn btn-blue" id="submitBtn" onclick="submitSecurity()">Submit to Home Page →</button>
+<a href="index.html" class="btn btn-ghost" style="display:block;text-align:center;text-decoration:none">Back to Home</a>
+
+<p style="font-size:11px;color:#999;margin-top:16px;text-align:center">This item will show on home page with BLUE SECURITY tag and Call Now button.</p>
+</div>
+
+<!-- FIREBASE API ADDED -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCVhdBBzUBMH7E2qjEhqgTXkD_bigkcTjs",
+  authDomain: "campus-find-67d1d.firebaseapp.com",
+  projectId: "campus-find-67d1d",
+  storageBucket: "campus-find-67d1d.firebasestorage.app",
+  messagingSenderId: "612919517562",
+  appId: "1:612919517562:web:df574fbe1d5155f245f6c3",
+  measurementId: "G-V5SE01FERV"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+document.getElementById('date').valueAsDate = new Date();
+let photoBase64 = "";
+document.getElementById('photo').addEventListener('change', function(e){
+ const file=e.target.files[0];
+ if(!file) return;
+ const reader=new FileReader();
+ reader.onload=function(ev){photoBase64=ev.target.result;}
+ reader.readAsDataURL(file);
+});
+
+async function submitSecurity(){
+ const name=document.getElementById('name').value.trim();
+ const cat=document.getElementById('cat').value;
+ const loc=document.getElementById('loc').value.trim();
+ const date=document.getElementById('date').value;
+ const post=document.getElementById('post').value.trim();
+ const desc=document.getElementById('desc').value.trim();
+ const contact=document.getElementById('contact').value.trim();
+ const guard=document.getElementById('guard').value.trim();
+ if(!name||!loc||!desc||!contact||!guard||!post){alert("Please fill all required fields");return;}
+
+ const btn=document.getElementById('submitBtn');
+ btn.innerText="Uploading..."; btn.disabled=true;
+
+ const secretKey = String(Math.floor(1000+Math.random()*9000));
+ const newItem={
+   id: Date.now(),
+   name: name,
+   cat: cat,
+   loc: loc + " (" + post + ")",
+   date: date,
+   desc: desc,
+   contact: contact,
+   postedBy: guard + " (Security)",
+   type: "security",
+   photo: photoBase64,
+   secretKey: secretKey,
+   status: "active",
+   createdAt: firebase.firestore.FieldValue.serverTimestamp()
+ };
+ try{
+   // 1. Firestore me save - Home + Admin me dikhega
+   await db.collection('items').add(newItem);
+   // 2. Is phone ke My Posts me key save karo
+   let myKeys = JSON.parse(localStorage.getItem('lpu_my_keys')||'[]');
+   myKeys.push(secretKey);
+   localStorage.setItem('lpu_my_keys', JSON.stringify(myKeys));
+   let myPosts = JSON.parse(localStorage.getItem('lpu_my_posts')||'[]');
+   myPosts.unshift(newItem);
+   localStorage.setItem('lpu_my_posts', JSON.stringify(myPosts));
+
+   alert("Success! Item posted on home page with SECURITY tag.\nSecret Key: "+secretKey);
+   window.location.href="index.html";
+ }catch(e){
+   console.log(e);
+   alert("Error: "+e.message);
+   btn.innerText="Submit to Home Page →"; btn.disabled=false;
+ }
+}
+</script>
+</body>
+</html>
